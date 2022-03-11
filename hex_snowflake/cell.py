@@ -1,5 +1,5 @@
 from mesa import Agent
-
+import random
 
 class Cell(Agent):
     """Represents a single ALIVE or DEAD cell in the simulation."""
@@ -17,8 +17,9 @@ class Cell(Agent):
         self._nextState = None
         self.isConsidered = False
         self.probability = 0.5
-        self.aType = False
+        self.aType = True
         self.bType = False
+        self.size = 0.1
 
     @property
     def isAlive(self):
@@ -27,6 +28,15 @@ class Cell(Agent):
     @property
     def neighbors(self):
         return self.model.grid.neighbor_iter((self.x, self.y))
+      
+    def cellType(self):
+      cellType = random() 
+      if celltype < 0.5:
+        self.aType = True 
+        return 1
+      if celltype >= 0.5:
+        self.bType = True 
+        return 0
 
     @property
     def considered(self):
@@ -43,16 +53,24 @@ class Cell(Agent):
         """
         # assume no state change
         self._nextState = self.state
+        self.aType = self.cellType
+        self.bType = self.cellType
 
         if not self.isAlive and self.isConsidered:
             # Get the neighbors and apply the rules on whether to be alive or dead
             # at the next tick.
             live_neighbors = sum(neighbor.isAlive for neighbor in self.neighbors)
-
+            
             if live_neighbors == 1:
                 self._nextState = self.ALIVE
                 for a in self.neighbors:
                     a.isConsidered = True
+            elif live_neighbors > 1 and self.cellType == 1:
+                self.size = 0.4
+                self._nextState = self.DEAD
+                for a in self.neighbors:
+                    a.isConsidered = True
+
 
     def advance(self):
         """

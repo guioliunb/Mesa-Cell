@@ -1,4 +1,4 @@
-# Conway's Game Of "Life" on a hexagonal grid
+SNOWFLAKE CELL
 
 ## Summary
 
